@@ -59,11 +59,19 @@ jobs:
         run: echo "matrix={\"roles\":[$(awk '/# Apps Start/{flag=1;next}/# Apps End/{flag=0}flag' sandbox.yml | awk '!/#/' | awk -F'[][]' '{print $2}' | tr '\n' ',' | sed 's/,*$//' | awk -F',' '{ for( i=1; i<=NF; i++ ) print $i }' | awk '{ gsub(/ /,""); print }'| sort -u | awk -vORS=, '{ print $1 }' | sed 's/,$/\n/')]}" >> $GITHUB_OUTPUT
 
   install:
-    name: '${{ matrix.roles }}'
+    name: '${{ matrix.roles }}-${{ matrix.arch }}'
     needs: [ansible-lint, check-entries, find-roles]
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     strategy:
-      matrix: ${{ fromJson(needs.find-roles.outputs.matrix) }}
+      matrix:
+        arch: [amd64, arm64]
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        exclude:
+          - arch: amd64
+            runner: ubuntu-24.04-arm
+          - arch: arm64
+            runner: ubuntu-24.04
+        roles: ${{ fromJson(needs.find-roles.outputs.matrix).roles }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v5
