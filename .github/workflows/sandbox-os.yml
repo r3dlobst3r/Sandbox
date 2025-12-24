@@ -5,43 +5,60 @@ on:
 
 jobs:
   ansible-lint:
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.actor != 'renovate[bot]')
+    if: github.event_name == 'pull_request' || !(github.event_name == 'push' && github.actor == 'renovate[bot]')
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+        with:
+          path: sandbox
+
+      - name: Checkout Saltbox repository
+        uses: actions/checkout@v6
+        with:
+          repository: saltyorg/Saltbox
+          path: saltbox
+
+      - name: Create Directories
+        run: sudo mkdir -p /srv/git
+
+      - name: Chown /srv/git
+        run: sudo chown -R runner:runner /srv/git
+
+      - name: Symlink cloned repository to /srv/git/saltbox
+        run: ln -s $GITHUB_WORKSPACE/saltbox /srv/git/saltbox
 
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
           cache: 'pip'
-          cache-dependency-path: 'requirements/requirements-lint.txt'
+          cache-dependency-path: 'saltbox/requirements/requirements-saltbox.txt'
 
       - name: Install packages
-        run: pip install -r ./requirements/requirements-lint.txt
+        run: pip install -r ./saltbox/requirements/requirements-saltbox.txt
 
       - name: Run ansible linter
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/sandbox
         run: ansible-lint
 
       - name: Run salty linter
-        run: python3 ./scripts/salty-linter.py ./roles
+        run: python3 ./sandbox/scripts/salty-linter.py ./roles
 
   check-entries:
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.actor != 'renovate[bot]')
+    if: github.event_name == 'pull_request' || !(github.event_name == 'push' && github.actor == 'renovate[bot]')
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Check Missing Entries
         run: ./scripts/check_missing_entries.sh
 
   find-roles:
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.actor != 'renovate[bot]')
+    if: github.event_name == 'pull_request' || !(github.event_name == 'push' && github.actor == 'renovate[bot]')
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: set-matrix
         run: |
           ROLES=$(awk '/# Apps Start/{flag=1;next}/# Apps End/{flag=0}flag' sandbox.yml | awk '!/#/' | awk -F'[][]' '{print $2}' | tr '\n' ',' | sed 's/,*$//' | awk -F',' '{ for( i=1; i<=NF; i++ ) print $i }' | awk '{ gsub(/ /,""); print }'| sort -u | awk -vORS=, '{ print $1 }' | sed 's/,$/\n/')
@@ -102,16 +119,29 @@ jobs:
         roles: ${{ fromJson(needs.find-roles.outputs.matrix).roles }}
       fail-fast: false
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+
+      - name: Install sb binary
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: saltyorg/sb-go
+          tag: latest
+          extension-matching: disable
+          platform: linux
+          arch: amd64
+          rename-to: sb
+          chmod: "0755"
+
+      - name: Check sb version
+        run: |
+          sudo mv /opt/hostedtoolcache/saltyorg/sb-go/latest/linux-amd64/sb /usr/local/bin/sb
+          /usr/local/bin/sb version
 
       - name: Install Dependencies
-        run: curl https://raw.githubusercontent.com/saltyorg/sb/master/sb_install.sh --output sb_install.sh && sudo bash sb_install.sh -v && ansible --version
+        run: /usr/local/bin/sb setup -v && /srv/ansible/venv/bin/ansible --version
 
       - name: Chown /srv/git
         run: sudo chown -R runner:runner /srv/git
-
-      - name: Print pip dependencies
-        run: cat /srv/git/sb/requirements-saltbox.txt
 
       - name: Edit accounts.yml
         run: cd /srv/git/saltbox && sed -i 's/seed/runner/g' accounts.yml
@@ -134,7 +164,7 @@ jobs:
         run: cd /srv/git/saltbox && sudo ansible-playbook saltbox.yml --tags "core" --skip-tags "settings" --extra-vars "@/tmp/vars.yml"
 
       - name: Copy default configuration
-        run: cp -n defaults/ansible.cfg.default ansible.cfg && cp -n defaults/settings.yml.default settings.yml
+        run: cp -n defaults/settings.yml.default settings.yml
 
       - name: Install ${{ matrix.roles }}
         run: sudo ansible-playbook sandbox.yml --tags "${{ matrix.roles }}" --skip-tags "settings" --extra-vars "@/tmp/vars.yml"

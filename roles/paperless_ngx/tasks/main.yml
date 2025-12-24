@@ -48,14 +48,12 @@
     name: gotenberg
   vars:
     gotenberg_name: "{{ paperless_ngx_name }}-gotenberg"
-    gotenberg_docker_image_tag: "7.8"
+    gotenberg_docker_image_tag: "8.22"
     gotenberg_docker_commands_default:
       - "gotenberg"
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
       - "--api-timeout=300s"
-      - "--uno-listener-restart-threshold=300"
-      - "--uno-listener-start-timeout=300s"
 
 - name: Remove legacy Tika Docker container
   ansible.builtin.include_tasks: "{{ resources_tasks_path }}/docker/remove_docker_container.yml"

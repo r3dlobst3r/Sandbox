@@ -1,12 +1,11 @@
 #########################################################################
-# Title:            Sandbox: Lunasea                                    #
-# Author(s):        JigSawFr                                            #
+# Title:            Sandbox: Qui                                        #
+# Author(s):        owine                                               #
 # URL:              https://github.com/saltyorg/Sandbox                 #
 # --                                                                    #
 #########################################################################
 #                   GNU General Public License v3.0                     #
 #########################################################################
-# Repository: https://github.com/JagandeepBrar/LunaSea
 ---
 - name: Add DNS record
   ansible.builtin.include_tasks: "{{ resources_tasks_path }}/dns/tasker.yml"
