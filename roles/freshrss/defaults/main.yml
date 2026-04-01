@@ -1,7 +1,7 @@
 ##########################################################################
 # Title:         Sandbox: freshrss                                       #
 # Author(s):     kxzaon, salty                                           #
-# URL:           https://github.com/saltyorg/Sandbox                     #
+# URL:           https://github.com/r3dlobst3r/Sandbox                     #
 # --                                                                     #
 ##########################################################################
 #                   GNU General Public License v3.0                      #
@@ -63,7 +63,7 @@ freshrss_role_docker_container: "{{ freshrss_name }}"
 # Image
 freshrss_role_docker_image_pull: true
 freshrss_role_docker_image_repo: "lscr.io/linuxserver/freshrss"
-freshrss_role_docker_image_tag: "amd64-latest"
+freshrss_role_docker_image_tag: "latest"
 freshrss_role_docker_image: "{{ lookup('role_var', '_docker_image_repo', role='freshrss') }}:{{ lookup('role_var', '_docker_image_tag', role='freshrss') }}"
 
 # Envs

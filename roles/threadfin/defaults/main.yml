@@ -1,7 +1,7 @@
 ##########################################################################
 # Title:         Sandbox: Threadfin | Default Variables                  #
 # Author(s):     Satz, Migz, salty, BeansIsFat                           #
-# URL:           https://github.com/saltyorg/Sandbox                     #
+# URL:           https://github.com/r3dlobst3r/Sandbox                     #
 # --                                                                     #
 ##########################################################################
 #                   GNU General Public License v3.0                      #
@@ -62,7 +62,7 @@ threadfin_role_docker_container: "{{ threadfin_name }}"
 # Image
 threadfin_role_docker_image_pull: true
 threadfin_role_docker_image_repo: "fyb3roptik/threadfin"
-threadfin_role_docker_image_tag: "latest"
+threadfin_role_docker_image_tag: "1.2.37"
 threadfin_role_docker_image: "{{ lookup('role_var', '_docker_image_repo', role='threadfin') }}:{{ lookup('role_var', '_docker_image_tag', role='threadfin') }}"
 
 # Envs

@@ -1,7 +1,7 @@
 # Saltbox Sandbox Repo
 [![Discord](https://img.shields.io/discord/853755447970758686)](https://discord.gg/ugfKXpFND8)
-[![CI](https://github.com/saltyorg/Sandbox/actions/workflows/sandbox.yml/badge.svg)](https://github.com/saltyorg/Sandbox/actions/workflows/sandbox.yml)
-[![License:](https://img.shields.io/github/license/saltyorg/Sandbox)](LICENSE.md)
+[![CI](https://github.com/r3dlobst3r/Sandbox/actions/workflows/sandbox.yml/badge.svg)](https://github.com/r3dlobst3r/Sandbox/actions/workflows/sandbox.yml)
+[![License:](https://img.shields.io/github/license/r3dlobst3r/Sandbox)](LICENSE.md)
 
 Sandbox Repository for Unofficial Saltbox Add-ons
 
@@ -9,7 +9,7 @@ Roles may get moved to the main repo if they become officially maintained.
 
 ### Requirements
 
-- [Saltbox](https://github.com/saltyorg/Saltbox/)
+- [Saltbox](https://github.com/r3dlobst3r/Saltbox/)
 
 ### Documentation
 

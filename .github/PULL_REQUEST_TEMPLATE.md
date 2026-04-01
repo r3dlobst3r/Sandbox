@@ -15,7 +15,7 @@ For new roles please include:
 - [ ] This role does not require Saltbox-specific configuration instructions (the upstream documentation is sufficient)
 - [x] I have decided to ignore these checkboxes and don't want this merged after all.
 
-It would be greatly appreciated if you create a sandbox documentation page yourself and do a PR into the [docs repo](https://github.com/saltyorg/docs). You, as the person creating the role, have presumably used the thing and are presumably familiar with any setup steps required. Anyone else here would need to research that.
+It would be greatly appreciated if you create a sandbox documentation page yourself and do a PR into the [docs repo](https://github.com/r3dlobst3r/docs). You, as the person creating the role, have presumably used the thing and are presumably familiar with any setup steps required. Anyone else here would need to research that.
 
 - [ ] I will create documentation after the role is merged.
 
